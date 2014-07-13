@@ -25,7 +25,7 @@ import yaml
 from yamldoc._exceptions import YAMLDocError
 
 docTemplate = u"""
-<span class="%(className)s YAMLDoc" markdown="1">
+<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
 
 %(headerLevel)s %(headerText)s
 
@@ -41,9 +41,7 @@ class BaseDoc(object):
 
 	"""
 	desc:
-		The base class from which the other doc classes are derived. You
-		don't create a `BaseDoc` object directly, but use the `DocFactory()`
-		function to create an object-specific doc object for you.
+		The base class from which the other doc classes are derived.
 	visible:
 		True
 	"""
@@ -54,7 +52,8 @@ class BaseDoc(object):
 
 		"""
 		desc:
-			Constructor.
+			Constructor. Normally, you don't create a `BaseDoc` (or one of its
+			derivatives) object directly, but use the [DocFactory] function.
 
 		arguments:
 			obj:		The object to document.
@@ -110,10 +109,18 @@ class BaseDoc(object):
 			u'className' 		: self.__class__.__name__,
 			u'headerLevel'		: u'#' * self.level,
 			u'headerText'		: self.header(_dict),
+			u'headerId'			: self._id(),
 			u'desc'				: _dict[u'desc'],
 			u'sections'			: self.sections(_dict),
 			u'misc'				: self.misc(_dict),
 			}
+		# Add header links, so that you can link to the object's documentation
+		# in the documentation of other objects.
+		l = self.name().split(u'.')
+		md += u'\n\n'
+		while len(l) > 0:
+			md += u'[%s]: #%s\n' % (u'.'.join(l), self._id())
+			l = l[1:]
 		return md
 
 	def _name(self):
@@ -211,6 +218,19 @@ class BaseDoc(object):
 
 		return self.namePrefix + self._name()
 
+	def _id(self):
+
+		"""
+		desc:
+			Returns the object's id, used to link to the object documentation.
+
+		returns:
+			desc:	The object's id.
+			type:	unicode
+		"""
+
+		return self.name().replace(u'.', u'-')
+
 	def header(self, _dict):
 
 		"""
@@ -282,4 +302,4 @@ class BaseDoc(object):
 
 	def exampleSection(self, example):
 
-		return u'~~~\n%s\n~~~\n\n' % example.strip()
+		return u'~~~ .python\n%s\n~~~\n\n' % example.strip()

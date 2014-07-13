@@ -21,7 +21,9 @@ along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 desc: |
 	v%-- python: "from yamldoc import version; print version" --%
 
-	*Copyright 2014 Sebastiaan Mathôt* (<http://www.cogsci.nl/smathot>)
+	*Copyright 2014 Sebastiaan Mathôt*
+
+	<http://www.cogsci.nl/smathot>
 
 	__About yamldoc:__
 
@@ -37,7 +39,7 @@ desc: |
 	%--
 	toc:
 		mindepth: 1
-		maxdepth: 2
+		maxdepth: 3
 		exclude: [Index]
 	--%
 

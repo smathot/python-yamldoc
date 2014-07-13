@@ -22,4 +22,6 @@ import yamldoc
 from academicmarkdown import build
 fd = yamldoc.DocFactory(yamldoc)
 md = build.MD(unicode(fd))
+build.TOCAnchorHeaders = True
+build.HTML(unicode(fd), u'readme.html')
 open(u'readme.md', u'w').write(md.encode(u'utf-8'))
