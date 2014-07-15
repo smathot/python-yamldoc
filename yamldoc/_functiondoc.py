@@ -49,6 +49,10 @@ class FunctionDoc(BaseDoc):
 			elif isinstance(default, str):
 				default = u'u\'%s\'' % default.decode(self.enc)
 			l.append(u'%s=%s' % (kw, default))
+		if self.argumentList != None:
+			l.append(u'\*%s' % self.argumentList)
+		if self.keywordDict != None:
+			l.append(u'\*\*%s' % self.keywordDict)
 		return u'*function* %s(%s)' % (self.name().replace(u'__',
 			u'\_\_'), u', '.join(l))
 
@@ -73,7 +77,7 @@ class FunctionDoc(BaseDoc):
 
 		md = u''
 		for arg, _dict in argDict.items():
-			md += u'- %s -- %s\n' % (arg, _dict[u'desc'])
+			md += u'- `%s` -- %s\n' % (arg, _dict[u'desc'])
 			for prop, val in _dict.items():
 				if prop == u'desc':
 					continue
@@ -89,7 +93,7 @@ class FunctionDoc(BaseDoc):
 
 		md = u''
 		for argList, val in _dict.items():
-			md += u'- %s%s: %s\n' % (prefix, argList, val)
+			md += u'- `%s%s`: %s\n' % (prefix, argList, val)
 		return md + u'\n'
 
 	def returnsSection(self, _dict):
@@ -134,21 +138,26 @@ class FunctionDoc(BaseDoc):
 
 		if al == None and len(alDict) != 0:
 			raise Exception('Defined non-existing argument or keyword list.')
+		if isinstance(alDict, basestring):
+			alDict = {al: alDict}
 		if len(alDict) > 1:
-			raise Exception('Only argument and keyword list allowed.')
+			raise Exception('Only one argument and keyword list allowed.')
 		if al not in alDict:
 			alDict[al] = u'No description.'
 		return alDict
 
-	def parseArgSpec(self):
+	def argSpec(self):
 
 		# Parse argument specification. If the @validate decorator is used, the
 		# argument specification is stored as __argspec__, otherwise we use
 		# introspection.
 		if hasattr(self.obj, u'__argspec__'):
-			argSpec = self.obj.__argspec__
-		else:
-			argSpec = inspect.getargspec(self.obj)
+			return self.obj.__argspec__
+		return inspect.getargspec(self.obj)
+
+	def parseArgSpec(self):
+
+		argSpec = self.argSpec()
 		if argSpec.args == None:
 			argSpec.args = []
 		if argSpec.defaults == None:
@@ -161,7 +170,7 @@ class FunctionDoc(BaseDoc):
 				argSpec.defaults):
 				self.keywords[kw] = default
 		self.argumentList = argSpec.varargs
-		self.keywordList = argSpec.keywords
+		self.keywordDict = argSpec.keywords
 		# We don't process the `self` argument
 		if len(self.args) > 0 and self.args[0] == u'self':
 			self.args = self.args[1:]
@@ -189,7 +198,7 @@ class FunctionDoc(BaseDoc):
 			_dict[u'keywords'] = {}
 		if self.argumentList != None and u'argument-list' not in _dict:
 			_dict[u'argument-list'] = {}
-		if self.keywordList != None and u'keyword-dict' not in _dict:
+		if self.keywordDict != None and u'keyword-dict' not in _dict:
 			_dict[u'keyword-dict'] = {}
 		# Parse all sections, and make sure that they
 		for sectionName, sectionValue in _dict.items():
@@ -205,7 +214,7 @@ class FunctionDoc(BaseDoc):
 					self.argumentList)
 			elif sectionName == u'keyword-dict':
 				_dict[sectionName] = self.argListDict(sectionValue,
-					self.keywordList)
+					self.keywordDict)
 		return _dict
 
 	def _name(self):

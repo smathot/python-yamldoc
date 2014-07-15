@@ -27,12 +27,13 @@ desc: |
 
 	__About yamldoc:__
 
-	With `yamldoc` you can take Python docstrings to the next level.
-
-	-	A systematic YAML-based docstring notation.
-	-	Generates markdown-formatted documentation for modules, classes, and
-		functions.
-	-	Automatically validate input and output of functions and methods.
+	- With `yamldoc` you can take Python docstrings to the next level.
+	- A systematic [YAML]-based docstring notation.
+	- Generates [Markdown]-formatted documentation for modules, classes, and
+	  functions.
+	- Automatically validate input and output of functions and methods with
+	  the @[yamldoc.validate] decorator.
+	- Inherit docstrings with the [yamldoc.inherit] metaclass.
 
 	__Index:__
 
@@ -42,6 +43,9 @@ desc: |
 		maxdepth: 3
 		exclude: [Index]
 	--%
+
+	[yaml]: http://www.yaml.org/
+	[markdown]: http://daringfireball.net/projects/markdown/
 
 example: |
 	%-- include: examples/example.py --%
@@ -56,3 +60,4 @@ from _classdoc import ClassDoc
 from _moduledoc import ModuleDoc
 from _docfactory import DocFactory
 from _validate import validate
+from _inherit import inherit

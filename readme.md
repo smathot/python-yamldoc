@@ -12,28 +12,33 @@ v0.1.0
 
 __About yamldoc:__
 
-With `yamldoc` you can take Python docstrings to the next level.
-
--       A systematic YAML-based docstring notation.
--       Generates markdown-formatted documentation for modules, classes, and
-        functions.
--       Automatically validate input and output of functions and methods.
+- With `yamldoc` you can take Python docstrings to the next level.
+- A systematic [YAML]-based docstring notation.
+- Generates [Markdown]-formatted documentation for modules, classes, and
+  functions.
+- Automatically validate input and output of functions and methods with
+  the @[yamldoc.validate] decorator.
+- Inherit docstrings with the [yamldoc.inherit] metaclass.
 
 __Index:__
 
 
 - [*module* yamldoc](#module-yamldoc)
-	- [*class* yamldoc.BaseDoc](#class-yamldoc.basedoc)
-		- [*function* yamldoc.BaseDoc.\_\_init\_\_(obj, level=1, enc=u'utf-8', namePrefix=u'')](#function-yamldoc.basedoc.__init__obj-level1-encuutf-8-nameprefixu)
-		- [*function* yamldoc.BaseDoc.\_\_str\_\_()](#function-yamldoc.basedoc.__str__)
-		- [*function* yamldoc.BaseDoc.\_\_unicode\_\_()](#function-yamldoc.basedoc.__unicode__)
-		- [*function* yamldoc.BaseDoc._dict()](#function-yamldoc.basedoc._dict)
-		- [*function* yamldoc.BaseDoc._id()](#function-yamldoc.basedoc._id)
-		- [*function* yamldoc.BaseDoc.name()](#function-yamldoc.basedoc.name)
-	- [*function* yamldoc.DocFactory(obj, types=[u'function', u'class', u'module'])](#function-yamldoc.docfactoryobj-typesufunction-uclass-umodule)
-	- [*function* yamldoc.validate(func)](#function-yamldoc.validatefunc)
+	- [*class* yamldoc.BaseDoc](#class-yamldocbasedoc)
+		- [*function* yamldoc.BaseDoc.\_\_init\_\_(obj, level=1, enc=u'utf-8', namePrefix=u'')](#function-yamldocbasedoc__init__obj-level1-encuutf-8-nameprefixu)
+		- [*function* yamldoc.BaseDoc.\_\_str\_\_()](#function-yamldocbasedoc__str__)
+		- [*function* yamldoc.BaseDoc.\_\_unicode\_\_()](#function-yamldocbasedoc__unicode__)
+		- [*function* yamldoc.BaseDoc._dict()](#function-yamldocbasedoc_dict)
+		- [*function* yamldoc.BaseDoc._id()](#function-yamldocbasedoc_id)
+		- [*function* yamldoc.BaseDoc.name()](#function-yamldocbasedocname)
+	- [*function* yamldoc.DocFactory(obj, types=[u'function', u'class', u'module'], \*args, \*\*kwargs)](#function-yamldocdocfactoryobj-typesufunction-uclass-umodule-args-kwargs)
+	- [*class* yamldoc.inherit](#class-yamldocinherit)
+	- [*function* yamldoc.validate(func)](#function-yamldocvalidatefunc)
 
 
+
+[yaml]: http://www.yaml.org/
+[markdown]: http://daringfireball.net/projects/markdown/
 
 
 __Example:__
@@ -124,17 +129,17 @@ Constructor. Normally, you don't create a `BaseDoc` (or one of its derivatives) 
 
 __Arguments:__
 
-- obj -- The object to document.
+- `obj` -- The object to document.
 
 __Keywords:__
 
-- enc -- The string encoding.
+- `enc` -- The string encoding.
 	- Default: u'utf-8'
 	- Type: str, unicode
-- namePrefix -- A prefix to be pre-pended to the object's name.
+- `namePrefix` -- A prefix to be pre-pended to the object's name.
 	- Default: u''
 	- Type: str, unicode
-- level -- Describes the header level to be used, so that you can generate formatted documentation.
+- `level` -- Describes the header level to be used, so that you can generate formatted documentation.
 	- Default: 1
 	- Type: int
 
@@ -267,7 +272,7 @@ The object's name with prefix.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-DocFactory" markdown="1">
 
-## *function* yamldoc.DocFactory(obj, types=[u'function', u'class', u'module'])
+## *function* yamldoc.DocFactory(obj, types=[u'function', u'class', u'module'], \*args, \*\*kwargs)
 
 Creates a type-specific doc object.
 
@@ -285,21 +290,21 @@ print md
 
 __Arguments:__
 
-- obj -- The object to document.
+- `obj` -- The object to document.
 
 __Keywords:__
 
-- types -- A list of types that should be documented.
+- `types` -- A list of types that should be documented.
 	- Default: [u'function', u'class', u'module']
 	- Type: list
 
 __Argument list:__
 
-- *args: No description.
+- `*args`: See [BaseDoc.__init__] for a description of available arguments.
 
 __Keyword dict:__
 
-- **kwargs: No description.
+- `**kwargs`: See [BaseDoc.__init__] for a description of available keywords.
 
 __Returns:__
 
@@ -314,6 +319,36 @@ A doc object.
 
 [yamldoc.DocFactory]: #yamldoc-DocFactory
 [DocFactory]: #yamldoc-DocFactory
+
+<span class="ClassDoc YAMLDoc" id="yamldoc-inherit" markdown="1">
+
+## *class* yamldoc.inherit
+
+A metaclass that inherits docstrings from parent classes.
+
+
+__Example:__
+
+~~~ .python
+# This will make all functions of A inherit the corresponding docstrings
+# from B.
+import yamldoc
+class A(B):
+        __metaclass__ = yamldoc.inherit
+~~~
+
+__Source(s):__
+
+- <http://groups.google.com/group/comp.lang.python/msg/26f7b4fcb4d66c95>
+- <http://stackoverflow.com/questions/8100166/inheriting-methods-docstrings-in-python>
+
+
+
+</span>
+
+
+[yamldoc.inherit]: #yamldoc-inherit
+[inherit]: #yamldoc-inherit
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-validate" markdown="1">
 
@@ -348,7 +383,7 @@ def test(a):
 
 __Arguments:__
 
-- func -- The function to validate.
+- `func` -- The function to validate.
 	- Type: function, method
 
 

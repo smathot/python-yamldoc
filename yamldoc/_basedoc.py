@@ -136,7 +136,7 @@ class BaseDoc(object):
 			type:	unicode
 		"""
 
-		return self.obj.__name__.decode(self.enc)
+		return self.obj.__name__.decode(self.enc).replace(u'__', u'\_\_')
 
 	def _dict(self):
 
@@ -172,6 +172,11 @@ class BaseDoc(object):
 						u'visible':	False
 						}
 			except:
+				# If the docstring appears to be YAML formatted, but
+				# nevertheless fails to parse, we raise an exception to inform
+				# the user of the problem.
+				if docStr.strip().startswith(u'desc:'):
+					yaml.load(docStr) # Will raise Exception
 				_dict = {
 					u'desc':	docStr,
 					u'visible':	False
@@ -298,6 +303,10 @@ class BaseDoc(object):
 		md = u''
 		if u'example' in _dict:
 			md += u'__Example:__\n\n' + self.exampleSection(_dict[u'example'])
+		if u'source' in _dict:
+			md += u'__Source(s):__\n\n'
+			for src in _dict[u'source']:
+				md += u'- <%s>\n' % src
 		return md
 
 	def exampleSection(self, example):

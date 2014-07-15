@@ -45,6 +45,12 @@ def DocFactory(obj, types=[u'function', u'class', u'module'], *args, **kwargs):
 			desc:	A list of types that should be documented.
 			type:	list
 
+	argument-list:
+		See [BaseDoc.__init__] for a description of available arguments.
+
+	keyword-dict:
+		See [BaseDoc.__init__] for a description of available keywords.
+
 	returns:
 		A doc object.
 	"""
