@@ -126,7 +126,7 @@ class FunctionDoc(BaseDoc):
 			if kw not in keywords:
 				raise InvalidDocString(
 					u'%s(): Defined non-existing keyword: %s' \
-					% (self.name(), arg))
+					% (self.name(), kw))
 			kwDict[kw] = self.valDict(val, default=keywords[kw])
 		for kw in keywords:
 			if kw not in kwDict:
