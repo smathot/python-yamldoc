@@ -34,16 +34,19 @@ class ModuleDoc(BaseDoc):
 
 		return u'*module* %s' % self.name()
 
-
 	def misc(self, _dict):
 
 		md = u''
 		for attribName, attrib in self.objAttribs():
-			df = DocFactory(attrib, types=[u'class', u'function'],
+			df = DocFactory(attrib, types=[u'class', u'function', u'module'],
 				namePrefix=u'%s.' % self.name(), level=self.level+1)
 			if df != None:
 				md += unicode(df)
 		return md
+
+	def name(self):
+
+		return self._name()
 
 	def _name(self):
 
