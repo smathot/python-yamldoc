@@ -24,8 +24,7 @@ import inspect
 import yaml
 from yamldoc._exceptions import YAMLDocError
 
-docTemplate = u"""
-<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
+docTemplate = u"""<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
 
 %(headerLevel)s %(headerText)s
 
@@ -171,6 +170,10 @@ class BaseDoc(object):
 						u'desc':	_dict,
 						u'visible':	False
 						}
+				if _dict == None:
+					_dict = {
+						u'visible':	False
+						}
 			except:
 				# If the docstring appears to be YAML formatted, but
 				# nevertheless fails to parse, we raise an exception to inform
@@ -311,4 +314,4 @@ class BaseDoc(object):
 
 	def exampleSection(self, example):
 
-		return u'~~~ .python\n%s\n~~~\n\n' % example.strip()
+		return u'~~~ {.python}\n%s\n~~~\n\n' % example.strip()
