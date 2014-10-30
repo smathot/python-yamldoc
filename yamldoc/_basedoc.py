@@ -344,3 +344,9 @@ class BaseDoc(object):
 	def exampleSection(self, example):
 
 		return u'~~~ .python\n%s\n~~~\n\n' % example.strip()
+
+	def escape(self, md):
+
+		for ch in u'_*[]':
+			md = md.replace(ch, u'\\'+ch)
+		return md
