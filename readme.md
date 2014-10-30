@@ -24,16 +24,16 @@ __Index:__
 
 - [*module* yamldoc](#module-yamldoc)
 	- [class __yamldoc.BaseDoc__](#class-__yamldocbasedoc__)
-		- [function __yamldoc.BaseDoc.\_\_init\_\___(obj, level=1, enc=u'utf-8', namePrefix=u'')](#function-__yamldocbasedoc__init____obj-level1-encuutf-8-nameprefixu)
-		- [function __yamldoc.BaseDoc.\_\_str\_\___()](#function-__yamldocbasedoc__str____)
-		- [function __yamldoc.BaseDoc.\_\_unicode\_\___()](#function-__yamldocbasedoc__unicode____)
-		- [function __yamldoc.BaseDoc.\_dict__()](#function-__yamldocbasedoc_dict__)
-		- [function __yamldoc.BaseDoc.\_id__()](#function-__yamldocbasedoc_id__)
-		- [function __yamldoc.BaseDoc.name__()](#function-__yamldocbasedocname__)
-		- [function __yamldoc.BaseDoc.stripDict__(\_dict)](#function-__yamldocbasedocstripdict___dict)
-	- [function __yamldoc.DocFactory__(obj, types=\[u'function', u'class', u'module', u'property'\], \*args, \*\*kwargs)](#function-__yamldocdocfactory__obj-typesufunction-uclass-umodule-uproperty-args-kwargs)
+		- [function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, level=1, enc=u'utf-8', namePrefix=u''\)](#function-__yamldocbasedoc__init____obj-level1-encuutf-8-nameprefixu)
+		- [function __yamldoc\.BaseDoc\.\_\_str\_\___\(\)](#function-__yamldocbasedoc__str____)
+		- [function __yamldoc\.BaseDoc\.\_\_unicode\_\___\(\)](#function-__yamldocbasedoc__unicode____)
+		- [function __yamldoc\.BaseDoc\.\_dict__\(\)](#function-__yamldocbasedoc_dict__)
+		- [function __yamldoc\.BaseDoc\.\_id__\(\)](#function-__yamldocbasedoc_id__)
+		- [function __yamldoc\.BaseDoc\.name__\(\)](#function-__yamldocbasedocname__)
+		- [function __yamldoc\.BaseDoc\.stripDict__\(\_dict\)](#function-__yamldocbasedocstripdict___dict)
+	- [function __yamldoc\.DocFactory__\(obj, types=\[u'function', u'class', u'module', u'property'\], \*args, \*\*kwargs\)](#function-__yamldocdocfactory__obj-typesufunction-uclass-umodule-uproperty-args-kwargs)
 	- [class __yamldoc.inherit__](#class-__yamldocinherit__)
-	- [function __yamldoc.validate__(func)](#function-__yamldocvalidate__func)
+	- [function __yamldoc\.validate__\(func\)](#function-__yamldocvalidate__func)
 
 
 
@@ -118,7 +118,7 @@ The base class from which the other doc classes are derived.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-__init__" markdown="1">
 
-### function __yamldoc.BaseDoc.\_\_init\_\___(obj, level=1, enc=u'utf-8', namePrefix=u'')
+### function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, level=1, enc=u'utf-8', namePrefix=u''\)
 
 Constructor. Normally, you don't create a `BaseDoc` (or one of its derivatives) object directly, but use the [DocFactory] function.
 
@@ -146,7 +146,7 @@ __Keywords:__
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-__str__" markdown="1">
 
-### function __yamldoc.BaseDoc.\_\_str\_\___()
+### function __yamldoc\.BaseDoc\.\_\_str\_\___\(\)
 
 Returns a string representation of the object's documentation.
 
@@ -164,7 +164,7 @@ A string representation of the object's documentation.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-__unicode__" markdown="1">
 
-### function __yamldoc.BaseDoc.\_\_unicode\_\___()
+### function __yamldoc\.BaseDoc\.\_\_unicode\_\___\(\)
 
 Returns a unicode string representation of the object's documentation.
 
@@ -182,7 +182,7 @@ A unicode string representation of the object's documentation.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-_dict" markdown="1">
 
-### function __yamldoc.BaseDoc.\_dict__()
+### function __yamldoc\.BaseDoc\.\_dict__\(\)
 
 Generates a dict representation of the object's documentation.
 
@@ -200,7 +200,7 @@ A dict representation of the object's documentation.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-_id" markdown="1">
 
-### function __yamldoc.BaseDoc.\_id__()
+### function __yamldoc\.BaseDoc\.\_id__\(\)
 
 Returns the object's id, used to link to the object documentation.
 
@@ -218,7 +218,7 @@ The object's id.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-name" markdown="1">
 
-### function __yamldoc.BaseDoc.name__()
+### function __yamldoc\.BaseDoc\.name__\(\)
 
 Returns the object's name with prefix.
 
@@ -236,7 +236,7 @@ The object's name with prefix.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-stripDict" markdown="1">
 
-### function __yamldoc.BaseDoc.stripDict__(\_dict)
+### function __yamldoc\.BaseDoc\.stripDict__\(\_dict\)
 
 Strips whitespace from all str/ unicode values in a dictionary.
 
@@ -264,7 +264,7 @@ A stripped dictionary.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-DocFactory" markdown="1">
 
-## function __yamldoc.DocFactory__(obj, types=\[u'function', u'class', u'module', u'property'\], \*args, \*\*kwargs)
+## function __yamldoc\.DocFactory__\(obj, types=\[u'function', u'class', u'module', u'property'\], \*args, \*\*kwargs\)
 
 Creates a type-specific doc object.
 
@@ -335,7 +335,7 @@ __Source(s):__
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-validate" markdown="1">
 
-## function __yamldoc.validate__(func)
+## function __yamldoc\.validate__\(func\)
 
 A decorator to validate arguments and return values for a function or method. This decorator allows you to fully specify and check the input and output of a function or method through a properly formatted docstring.
 
@@ -381,13 +381,13 @@ __Arguments:__
 
 [*module* yamldoc]: #module-yamldoc
 [class __yamldoc.BaseDoc__]: #class-__yamldocbasedoc__
-[function __yamldoc.BaseDoc.\_\_init\_\___(obj, level=1, enc=u'utf-8', namePrefix=u'')]: #function-__yamldocbasedoc__init____obj-level1-encuutf-8-nameprefixu
-[function __yamldoc.BaseDoc.\_\_str\_\___()]: #function-__yamldocbasedoc__str____
-[function __yamldoc.BaseDoc.\_\_unicode\_\___()]: #function-__yamldocbasedoc__unicode____
-[function __yamldoc.BaseDoc.\_dict__()]: #function-__yamldocbasedoc_dict__
-[function __yamldoc.BaseDoc.\_id__()]: #function-__yamldocbasedoc_id__
-[function __yamldoc.BaseDoc.name__()]: #function-__yamldocbasedocname__
-[function __yamldoc.BaseDoc.stripDict__(\_dict)]: #function-__yamldocbasedocstripdict___dict
-[function __yamldoc.DocFactory__(obj, types=\[u'function', u'class', u'module', u'property'\], \*args, \*\*kwargs)]: #function-__yamldocdocfactory__obj-typesufunction-uclass-umodule-uproperty-args-kwargs
+[function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, level=1, enc=u'utf-8', namePrefix=u''\)]: #function-__yamldocbasedoc__init____obj-level1-encuutf-8-nameprefixu
+[function __yamldoc\.BaseDoc\.\_\_str\_\___\(\)]: #function-__yamldocbasedoc__str____
+[function __yamldoc\.BaseDoc\.\_\_unicode\_\___\(\)]: #function-__yamldocbasedoc__unicode____
+[function __yamldoc\.BaseDoc\.\_dict__\(\)]: #function-__yamldocbasedoc_dict__
+[function __yamldoc\.BaseDoc\.\_id__\(\)]: #function-__yamldocbasedoc_id__
+[function __yamldoc\.BaseDoc\.name__\(\)]: #function-__yamldocbasedocname__
+[function __yamldoc\.BaseDoc\.stripDict__\(\_dict\)]: #function-__yamldocbasedocstripdict___dict
+[function __yamldoc\.DocFactory__\(obj, types=\[u'function', u'class', u'module', u'property'\], \*args, \*\*kwargs\)]: #function-__yamldocdocfactory__obj-typesufunction-uclass-umodule-uproperty-args-kwargs
 [class __yamldoc.inherit__]: #class-__yamldocinherit__
-[function __yamldoc.validate__(func)]: #function-__yamldocvalidate__func
+[function __yamldoc\.validate__\(func\)]: #function-__yamldocvalidate__func

@@ -53,7 +53,7 @@ class FunctionDoc(BaseDoc):
 			l.append(u'*%s' % self.argumentList)
 		if self.keywordDict != None:
 			l.append(u'**%s' % self.keywordDict)
-		return u'function __%s__(%s)' % (self.escape(self.name()),
+		return u'function __%s__\(%s\)' % (self.escape(self.name()),
 			self.escape(u', '.join(l)))
 
 	def sections(self, _dict):

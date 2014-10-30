@@ -347,6 +347,6 @@ class BaseDoc(object):
 
 	def escape(self, md):
 
-		for ch in u'_*[]':
+		for ch in u'\\_*[]{}()#+.!':
 			md = md.replace(ch, u'\\'+ch)
 		return md
