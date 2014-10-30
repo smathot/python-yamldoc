@@ -58,6 +58,7 @@ from _basedoc import BaseDoc
 from _functiondoc import FunctionDoc
 from _classdoc import ClassDoc
 from _moduledoc import ModuleDoc
+from _propertydoc import PropertyDoc
 from _docfactory import DocFactory
 from _validate import validate
 from _inherit import inherit

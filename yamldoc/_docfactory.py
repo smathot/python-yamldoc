@@ -21,7 +21,8 @@ along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 import types
 import inspect
 
-def DocFactory(obj, types=[u'function', u'class', u'module'], *args, **kwargs):
+def DocFactory(obj, types=[u'function', u'class', u'module', u'property'],
+	*args, **kwargs):
 
 	"""
 	desc:
@@ -57,13 +58,13 @@ def DocFactory(obj, types=[u'function', u'class', u'module'], *args, **kwargs):
 
 	if u'function' in types and inspect.isfunction(obj) or \
 		inspect.ismethod(obj):
-		from yamldoc._functiondoc import FunctionDoc
-		return FunctionDoc(obj, *args, **kwargs)
-	if u'class' in types and inspect.isclass(obj):
-		from yamldoc._classdoc import ClassDoc
-		return ClassDoc(obj, *args, **kwargs)
-	if u'module' in types and inspect.ismodule(obj):
-		from yamldoc._moduledoc import ModuleDoc
-		return ModuleDoc(obj, *args, **kwargs)
-	return None
-
+		from yamldoc._functiondoc import FunctionDoc as Doc
+	elif u'class' in types and inspect.isclass(obj):
+		from yamldoc._classdoc import ClassDoc as Doc
+	elif u'module' in types and inspect.ismodule(obj):
+		from yamldoc._moduledoc import ModuleDoc as Doc
+	elif u'property' in types and type(obj) == property:
+		from yamldoc._propertydoc import PropertyDoc as Doc
+	else:
+		return None
+	return Doc(obj, *args, **kwargs)
