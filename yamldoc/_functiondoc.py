@@ -53,7 +53,7 @@ class FunctionDoc(BaseDoc):
 			l.append(u'\*%s' % self.argumentList)
 		if self.keywordDict != None:
 			l.append(u'\*\*%s' % self.keywordDict)
-		return u'*function* %s(%s)' % (self.name().replace(u'__',
+		return u'function __%s__(%s)' % (self.name().replace(u'__',
 			u'\_\_'), u', '.join(l))
 
 	def sections(self, _dict):
@@ -184,6 +184,8 @@ class FunctionDoc(BaseDoc):
 		val.update(properties)
 		if u'type' in val and not isinstance(val[u'type'], list):
 			val[u'type'] = [val[u'type']]
+		if u'desc' not in val:
+			val[u'desc'] = u'No description'
 		return val
 
 	def _dict(self):

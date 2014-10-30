@@ -24,7 +24,7 @@ import inspect
 import yaml
 from yamldoc._exceptions import YAMLDocError
 
-docTemplate = u"""<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
+docTemplate = u"""<div class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
 
 %(headerLevel)s %(headerText)s
 
@@ -33,7 +33,7 @@ docTemplate = u"""<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown
 %(sections)s
 %(misc)s
 
-</span>
+</div>
 """
 
 class BaseDoc(object):
@@ -120,6 +120,10 @@ class BaseDoc(object):
 		while len(l) > 0:
 			md += u'[%s]: #%s\n' % (u'.'.join(l), self._id())
 			l = l[1:]
+		md += u'\n'
+		# Strip all triple newlines
+		while u'\n\n\n' in md:
+			md = md.replace(u'\n\n\n', u'\n\n')
 		return md
 
 	def _name(self):
@@ -179,6 +183,7 @@ class BaseDoc(object):
 				# nevertheless fails to parse, we raise an exception to inform
 				# the user of the problem.
 				if docStr.strip().startswith(u'desc:'):
+					print docStr
 					yaml.load(docStr) # Will raise Exception
 				_dict = {
 					u'desc':	docStr,
@@ -188,6 +193,30 @@ class BaseDoc(object):
 			_dict[u'desc'] = self.undefined
 		if u'visible' not in _dict:
 			_dict[u'visible'] = True
+		_dict = self.stripDict(_dict)
+		return _dict
+
+	def stripDict(self, _dict):
+
+		"""
+		desc:
+			Strips whitespace from all str/ unicode values in a dictionary.
+
+		arguments:
+			_dict:
+				desc:	The dictionary to strip.
+				type:	dict
+
+		returns:
+			desc:		A stripped dictionary.
+			type:		dict
+		"""
+
+		for key, value in _dict.items():
+			if isinstance(value, basestring):
+				_dict[key] = value.strip()
+			elif isinstance(value, dict):
+				_dict[key] = self.stripDict(value)
 		return _dict
 
 	def objAttribs(self):

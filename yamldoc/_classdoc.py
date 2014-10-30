@@ -32,14 +32,14 @@ class ClassDoc(BaseDoc):
 
 	def header(self, _dict):
 
-		return u'*class* %s' % self.name()
+		return u'class __%s__' % self.name()
 
 	def misc(self, _dict):
 
 		md = u''
 		for attribName, attrib in self.objAttribs():
 			df = DocFactory(attrib, namePrefix=u'%s.' % self.name(),
-				level=self.level+1)
+				level=self.level+1, types=[u'function', u'property'])
 			if df != None:
 				md += unicode(df)
 		return md
