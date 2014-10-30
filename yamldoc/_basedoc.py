@@ -24,7 +24,7 @@ import inspect
 import yaml
 from yamldoc._exceptions import YAMLDocError
 
-docTemplate = u"""<div class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
+docTemplate = u"""<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
 
 %(headerLevel)s %(headerText)s
 
@@ -33,7 +33,7 @@ docTemplate = u"""<div class="%(className)s YAMLDoc" id="%(headerId)s" markdown=
 %(sections)s
 %(misc)s
 
-</div>
+</span>
 """
 
 class BaseDoc(object):
@@ -343,4 +343,4 @@ class BaseDoc(object):
 
 	def exampleSection(self, example):
 
-		return u'~~~ {.python}\n%s\n~~~\n\n' % example.strip()
+		return u'~~~ .python\n%s\n~~~\n\n' % example.strip()
