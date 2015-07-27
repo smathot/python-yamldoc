@@ -20,8 +20,10 @@ along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 
 import yamldoc
 from academicmarkdown import build
+from yamldoc.py3compat import *
 fd = yamldoc.DocFactory(yamldoc)
-md = build.MD(unicode(fd))
+md = build.MD(str(fd))
 build.TOCAnchorHeaders = True
-build.HTML(unicode(fd), u'readme.html')
-open(u'readme.md', u'w').write(md.encode(u'utf-8'))
+build.HTML(str(fd), u'readme.html')
+print(md)
+open(u'readme.md', u'w').write(safe_encode(md))

@@ -2,10 +2,10 @@
 
 # *module* yamldoc
 
-v0.1.0
+v0.2.0
 
 
-*Copyright 2014 Sebastiaan Mathôt*
+*Copyright 2014-2015 Sebastiaan Mathôt*
 
 <http://www.cogsci.nl/smathot>
 
@@ -24,7 +24,7 @@ __Index:__
 
 - [*module* yamldoc](#module-yamldoc)
 	- [class __yamldoc.BaseDoc__](#class-__yamldocbasedoc__)
-		- [function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, level=1, enc=u'utf-8', namePrefix=u''\)](#function-__yamldocbasedoc__init____obj-level1-encuutf-8-nameprefixu)
+		- [function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, enc=u'utf-8', namePrefix=u'', level=1, customName=None, container=u'span', onlyContents=False, exclude=\[\]\)](#function-__yamldocbasedoc__init____obj-encuutf-8-nameprefixu-level1-customnamenone-containeruspan-onlycontentsfalse-exclude)
 		- [function __yamldoc\.BaseDoc\.\_\_str\_\___\(\)](#function-__yamldocbasedoc__str____)
 		- [function __yamldoc\.BaseDoc\.\_\_unicode\_\___\(\)](#function-__yamldocbasedoc__unicode____)
 		- [function __yamldoc\.BaseDoc\.\_dict__\(\)](#function-__yamldocbasedoc_dict__)
@@ -118,7 +118,7 @@ The base class from which the other doc classes are derived.
 
 <span class="FunctionDoc YAMLDoc" id="yamldoc-BaseDoc-__init__" markdown="1">
 
-### function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, level=1, enc=u'utf-8', namePrefix=u''\)
+### function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, enc=u'utf-8', namePrefix=u'', level=1, customName=None, container=u'span', onlyContents=False, exclude=\[\]\)
 
 Constructor. Normally, you don't create a `BaseDoc` (or one of its derivatives) object directly, but use the [DocFactory] function.
 
@@ -129,14 +129,26 @@ __Arguments:__
 __Keywords:__
 
 - `enc` -- The string encoding.
+	- Type: str, unicode
 	- Default: u'utf-8'
-	- Type: str, unicode
 - `namePrefix` -- A prefix to be pre-pended to the object's name.
-	- Default: u''
 	- Type: str, unicode
+	- Default: u''
 - `level` -- Describes the header level to be used, so that you can generate formatted documentation.
-	- Default: 1
 	- Type: int
+	- Default: 1
+- `customName` -- A custom name for the object.
+	- Type: str, unicode, None
+	- Default: None
+- `container` -- The HTML container type that wraps the documentation. Should be 'div' or 'span'.
+	- Type: str, unicode
+	- Default: u'span'
+- `onlyContents` -- Indicates whether the full documentation should be generated (False), or only documentation for the child objects (True). This can be useful for documenting the function in a module, without providing any documentation on the module itself.
+	- Type: bool
+	- Default: False
+- `exclude` -- A list of child objects to exclude. Only applicable to objects that have children, such as classes and modules.
+	- Type: list
+	- Default: []
 
 </span>
 
@@ -277,7 +289,7 @@ import yamldoc
 df = yamldoc.DocFactory(myFunction)
 # Get a markdown-style formatted docstring and print it.
 md = unicode(df)
-print md
+print(md)
 ~~~
 
 __Arguments:__
@@ -287,8 +299,8 @@ __Arguments:__
 __Keywords:__
 
 - `types` -- A list of types that should be documented.
-	- Default: [u'function', u'class', u'module', u'property']
 	- Type: list
+	- Default: [u'function', u'class', u'module', u'property']
 
 __Argument list:__
 
@@ -355,6 +367,10 @@ def test(a):
                 a:
                         desc:   An argument that should be integer.
                         type:   int
+                b:
+                        desc:   An argument that should be either the value
+                                        'x' or 'y'.
+                        valid:  [x, y]
 
         returns:
                 desc:           The function should return a boolean.
@@ -381,7 +397,7 @@ __Arguments:__
 
 [*module* yamldoc]: #module-yamldoc
 [class __yamldoc.BaseDoc__]: #class-__yamldocbasedoc__
-[function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, level=1, enc=u'utf-8', namePrefix=u''\)]: #function-__yamldocbasedoc__init____obj-level1-encuutf-8-nameprefixu
+[function __yamldoc\.BaseDoc\.\_\_init\_\___\(obj, enc=u'utf-8', namePrefix=u'', level=1, customName=None, container=u'span', onlyContents=False, exclude=\[\]\)]: #function-__yamldocbasedoc__init____obj-encuutf-8-nameprefixu-level1-customnamenone-containeruspan-onlycontentsfalse-exclude
 [function __yamldoc\.BaseDoc\.\_\_str\_\___\(\)]: #function-__yamldocbasedoc__str____
 [function __yamldoc\.BaseDoc\.\_\_unicode\_\___\(\)]: #function-__yamldocbasedoc__unicode____
 [function __yamldoc\.BaseDoc\.\_dict__\(\)]: #function-__yamldocbasedoc_dict__

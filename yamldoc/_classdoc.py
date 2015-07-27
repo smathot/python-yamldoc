@@ -18,8 +18,10 @@ You should have received a copy of the GNU General Public License
 along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from yamldoc.py3compat import *
 from yamldoc._basedoc import BaseDoc
 from yamldoc._docfactory import DocFactory
+from yamldoc.py3compat import *
 
 class ClassDoc(BaseDoc):
 
@@ -38,12 +40,17 @@ class ClassDoc(BaseDoc):
 
 		md = u''
 		for attribName, attrib in self.objAttribs():
+			if attribName in self.exclude:
+				continue
 			df = DocFactory(attrib, namePrefix=u'%s.' % self.name(),
-				level=self.level+1, types=[u'function', u'property'])
-			if df != None:
-				md += unicode(df)
+				level=self.level+1, types=[u'function', u'property'],
+				container=self.container, exclude=self.exclude)
+			if df is not None:
+				md += str(df)
 		return md
 
 	def _name(self):
 
-		return self.obj.__name__.decode(self.enc)
+		if self.customName is not None:
+			return self.customName
+		return safe_decode(self.obj.__name__, enc=self.enc)

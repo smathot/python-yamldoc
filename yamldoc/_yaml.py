@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
 """
 This file is part of YAMLDoc.
 
@@ -19,24 +16,31 @@ along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from yamldoc.py3compat import *
-from yamldoc._basedoc import BaseDoc
+import yaml
+from collections import OrderedDict
 
-class PropertyDoc(BaseDoc):
+def orderedLoad(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
 
 	"""
 	desc:
-		A docstring processer for property objects.
-	visible:
-		False
+		Loads YAML strings while treating dictionaries as OrderedDict objects,
+		so that argument order is preserved.
+
+	arguments:
+		stream:
+			desc:	YAML text.
+			type:	[str, unicode]
+
+	returns:
+		desc:	A data structure.
 	"""
 
-	def header(self, _dict):
-
-		return u'property __%s__' % self.name()
-
-	def _name(self):
-
-		_dict = self._dict()
-		if u'name' not in _dict:
-			raise Exception(u'Property docstrings require a name attribute')
-		return _dict[u'name']
+	class OrderedLoader(Loader):
+		pass
+	def construct_mapping(loader, node):
+		loader.flatten_mapping(node)
+		return object_pairs_hook(loader.construct_pairs(node))
+	OrderedLoader.add_constructor(
+		yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+		construct_mapping)
+	return yaml.load(stream, OrderedLoader)

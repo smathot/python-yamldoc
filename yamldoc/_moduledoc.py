@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from yamldoc.py3compat import *
 from yamldoc._basedoc import BaseDoc
 from yamldoc._docfactory import DocFactory
 
@@ -37,11 +38,18 @@ class ModuleDoc(BaseDoc):
 	def misc(self, _dict):
 
 		md = u''
+		if self.onlyContents:
+			prefix = u''
+		else:
+			prefix = u'%s.' % self.name()
 		for attribName, attrib in self.objAttribs():
+			if attribName in self.exclude:
+				continue
 			df = DocFactory(attrib, types=[u'class', u'function', u'module'],
-				namePrefix=u'%s.' % self.name(), level=self.level+1)
-			if df != None:
-				md += unicode(df)
+				namePrefix=prefix, level=self.level+1, container=self.container,
+				exclude=self.exclude)
+			if df is not None:
+				md += str(df)
 		return md
 
 	def name(self):
@@ -50,4 +58,6 @@ class ModuleDoc(BaseDoc):
 
 	def _name(self):
 
-		return self.obj.__name__.decode(self.enc)
+		if self.customName is not None:
+			return self.customName
+		return safe_decode(self.obj.__name__, enc=self.enc)

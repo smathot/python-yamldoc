@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from yamldoc.py3compat import *
 import types
 import inspect
 
@@ -31,12 +32,12 @@ def DocFactory(obj, types=[u'function', u'class', u'module', u'property'],
 	example: |
 
 		import yamldoc
-		
+
 		# Create a type-specific docstring processor for `myFunction`.
 		df = yamldoc.DocFactory(myFunction)
 		# Get a markdown-style formatted docstring and print it.
 		md = unicode(df)
-		print md
+		print(md)
 
 	arguments:
 		obj:	The object to document.

@@ -19,9 +19,9 @@ along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 
 ---
 desc: |
-	v%-- python: "from yamldoc import version; print version" --%
+	v%-- python: "from yamldoc import version; print(version)" --%
 
-	*Copyright 2014 Sebastiaan Mathôt*
+	*Copyright 2014-2015 Sebastiaan Mathôt*
 
 	<http://www.cogsci.nl/smathot>
 
@@ -52,13 +52,13 @@ example: |
 ---
 """
 
-version = u'0.1.0'
+version = u'0.2.0'
 
-from _basedoc import BaseDoc
-from _functiondoc import FunctionDoc
-from _classdoc import ClassDoc
-from _moduledoc import ModuleDoc
-from _propertydoc import PropertyDoc
-from _docfactory import DocFactory
-from _validate import validate
-from _inherit import inherit
+from yamldoc._basedoc import BaseDoc
+from yamldoc._functiondoc import FunctionDoc
+from yamldoc._classdoc import ClassDoc
+from yamldoc._moduledoc import ModuleDoc
+from yamldoc._propertydoc import PropertyDoc
+from yamldoc._docfactory import DocFactory
+from yamldoc._validate import validate
+from yamldoc._inherit import inherit

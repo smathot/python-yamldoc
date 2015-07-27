@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from yamldoc.py3compat import *
 import inspect
 from yamldoc._functiondoc import FunctionDoc
 from yamldoc._exceptions import InvalidReturnValue, InvalidArgument, \
@@ -41,9 +42,11 @@ def checkVal(val, spec):
 
 	if u'type' in spec:
 		_type = type(val)
-		if val.__class__.__name__ in spec[u'type']:
-			return True
-		return False
+		if val.__class__.__name__ not in spec[u'type']:
+			return False
+	if u'valid' in spec:
+		if val not in spec[u'valid']:
+			return False
 	return True
 
 def validate(func):
@@ -70,6 +73,10 @@ def validate(func):
 				a:
 					desc:	An argument that should be integer.
 					type:	int
+				b:
+					desc:	An argument that should be either the value
+							'x' or 'y'.
+					valid:	[x, y]
 
 			returns:
 				desc:		The function should return a boolean.
@@ -111,7 +118,7 @@ def validate(func):
 			argSpec += inner._dict[u'keywords'].values()
 		# Ignore the self argument for methods
 		_args = list(args)
-		if inner.__argspec__.args != None and inner.__argspec__.args[0] == \
+		if inner.__argspec__.args is not None and inner.__argspec__.args[0] == \
 			u'self':
 			_args = _args[1:]
 		if len(_args) > len(argSpec):
@@ -120,10 +127,14 @@ def validate(func):
 				% (func.__name__, len(argSpec)))
 		for i in range(len(_args)):
 			if not checkVal(_args[i], argSpec[i]):
-				raise InvalidArgument(
-					u'%s(): Argument %s should be of type(s) %s, not %s.' \
-					% (func.__name__, i+1, argSpec[i][u'type'],
-					_args[i].__class__.__name__))
+				msg = u'%s(): Invalid type or value for argument "%s".' \
+					% (func.__name__, i+1)
+				if u'type' in argSpec[i]:
+					msg += u' Type should be one of "%s"' % argSpec[i][u'type']
+				if u'valid' in argSpec[i]:
+					msg += u' Value should be one of "%s"' \
+						% argSpec[i][u'valid']
+				raise InvalidArgument(msg)
 		# Next check the keyword arguments
 		kwSpec = {}
 		if u'keywords' in inner._dict:
@@ -133,10 +144,14 @@ def validate(func):
 				raise InvalidKeyword(u'%s(): Unexpected keyword: %s' \
 					% (func.__name__, kw))
 			if not checkVal(kwargs[kw], kwSpec[kw]):
-				raise InvalidKeyword(
-					u'%s(): Keyword %s should be of type(s) %s, not %s.' \
-					% (func.__name__, kw, kwSpec[kw][u'type'],
-					val.__class__.__name__))
+				msg = u'%s(): Invalid type or value for keyword "%s".' \
+					% (func.__name__, kw)
+				if u'type' in kwSpec[kw]:
+					msg += u' Type should be one of "%s"' % kwSpec[kw][u'type']
+				if u'valid' in kwSpec[kw]:
+					msg += u' Value should be one of "%s"' \
+						% kwSpec[kw][u'valid']
+				raise InvalidKeyword(msg)
 		# Call the function
 		retVal = func(*args, **kwargs)
 		# Check the return value

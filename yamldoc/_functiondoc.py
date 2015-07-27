@@ -18,11 +18,13 @@ You should have received a copy of the GNU General Public License
 along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from yamldoc.py3compat import *
 import types
 import inspect
 import yaml
 from yamldoc._basedoc import BaseDoc
 from yamldoc._exceptions import InvalidDocString
+from collections import OrderedDict
 
 class FunctionDoc(BaseDoc):
 
@@ -44,14 +46,12 @@ class FunctionDoc(BaseDoc):
 		for arg in self.args:
 			l.append(arg)
 		for kw, default in self.keywords.items():
-			if isinstance(default, unicode):
-				default = u'u\'%s\'' % default
-			elif isinstance(default, str):
-				default = u'u\'%s\'' % default.decode(self.enc)
-			l.append(u'%s=%s' % (kw, default))
-		if self.argumentList != None:
+			if isinstance(default, basestring):
+				default = u'u\'%s\'' % safe_decode(default, enc=self.enc)
+			l.append(u'%s=%s' % (kw, str(default)))
+		if self.argumentList is not None:
 			l.append(u'*%s' % self.argumentList)
-		if self.keywordDict != None:
+		if self.keywordDict is not None:
 			l.append(u'**%s' % self.keywordDict)
 		return u'function __%s__\(%s\)' % (self.escape(self.name()),
 			self.escape(u', '.join(l)))
@@ -81,8 +81,8 @@ class FunctionDoc(BaseDoc):
 			for prop, val in _dict.items():
 				if prop == u'desc':
 					continue
-				if prop == u'type':
-					if isinstance(val, list) and prop != u'default':
+				if prop in (u'type', u'valid'):
+					if isinstance(val, list):
 						val = u', '.join(val)
 				elif prop == u'default':
 					val = repr(val)
@@ -109,30 +109,34 @@ class FunctionDoc(BaseDoc):
 
 	def argDict(self, argDict, args):
 
-		for arg, val in argDict.items():
+		newDict = OrderedDict()
+		for arg in args:
+			if arg in argDict:
+				newDict[arg] = self.valDict(argDict[arg])
+			else:
+				newDict[arg] = self.valDict(u'No description')
+		for arg in argDict.keys():
 			if arg not in args:
 				raise InvalidDocString(
 					u'%s(): Defined non-existing argument: %s' \
 					% (self.name(), arg))
-			argDict[arg] = self.valDict(val)
-		for arg in args:
-			if arg not in argDict:
-				argDict[arg] = self.valDict(u'No description')
-		return argDict
+		return newDict
 
 	def kwDict(self, kwDict, keywords):
 
-		for kw, val in kwDict.items():
+		newDict = OrderedDict()
+		for kw in keywords:
+			if kw in kwDict:
+				newDict[kw] = self.valDict(kwDict[kw], default=keywords[kw])
+			else:
+				newDict[kw] = self.valDict(u'No description',
+					default=keywords[kw])
+		for kw in kwDict.keys():
 			if kw not in keywords:
 				raise InvalidDocString(
 					u'%s(): Defined non-existing keyword: %s' \
 					% (self.name(), kw))
-			kwDict[kw] = self.valDict(val, default=keywords[kw])
-		for kw in keywords:
-			if kw not in kwDict:
-				kwDict[kw] = self.valDict(u'No description',
-					default=keywords[kw])
-		return kwDict
+		return newDict
 
 	def argListDict(self, alDict, al):
 
@@ -158,14 +162,14 @@ class FunctionDoc(BaseDoc):
 	def parseArgSpec(self):
 
 		argSpec = self.argSpec()
-		if argSpec.args == None:
+		if argSpec.args is None:
 			argSpec.args = []
-		if argSpec.defaults == None:
+		if argSpec.defaults is None:
 			self.args = argSpec.args
-			self.keywords = {}
+			self.keywords = OrderedDict()
 		else:
 			self.args = argSpec.args[:len(argSpec.args)-len(argSpec.defaults)]
-			self.keywords = {}
+			self.keywords = OrderedDict()
 			for kw, default in zip(argSpec.args[len(self.args):],
 				argSpec.defaults):
 				self.keywords[kw] = default
@@ -177,10 +181,8 @@ class FunctionDoc(BaseDoc):
 
 	def valDict(self, val, **properties):
 
-		if isinstance(val, str):
-			val = val.decode(self.enc)
 		if isinstance(val, basestring):
-			val = {u'desc' : val}
+			val = {u'desc' : safe_decode(val, enc=self.enc)}
 		val.update(properties)
 		if u'type' in val and not isinstance(val[u'type'], list):
 			val[u'type'] = [val[u'type']]
@@ -195,13 +197,13 @@ class FunctionDoc(BaseDoc):
 		if u'desc' not in _dict:
 			_dict[u'desc'] = u'No description.'
 		if len(self.args) > 0 and u'arguments' not in _dict:
-			_dict[u'arguments'] = {}
+			_dict[u'arguments'] = OrderedDict()
 		if len(self.keywords) > 0 and u'keywords' not in _dict:
-			_dict[u'keywords'] = {}
+			_dict[u'keywords'] = OrderedDict()
 		if self.argumentList != None and u'argument-list' not in _dict:
-			_dict[u'argument-list'] = {}
+			_dict[u'argument-list'] = OrderedDict()
 		if self.keywordDict != None and u'keyword-dict' not in _dict:
-			_dict[u'keyword-dict'] = {}
+			_dict[u'keyword-dict'] = OrderedDict()
 		# Parse all sections, and make sure that they
 		for sectionName, sectionValue in _dict.items():
 			if sectionName == u'returns':
@@ -221,4 +223,6 @@ class FunctionDoc(BaseDoc):
 
 	def _name(self):
 
-		return self.obj.__name__.decode(self.enc)
+		if self.customName is not None:
+			return self.customName
+		return safe_decode(self.obj.__name__, enc=self.enc)

@@ -18,13 +18,15 @@ You should have received a copy of the GNU General Public License
 along with YAMLDoc.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from yamldoc.py3compat import *
 import re
 import types
 import inspect
-import yaml
+from yamldoc._yaml import orderedLoad
 from yamldoc._exceptions import YAMLDocError
+from collections import OrderedDict
 
-docTemplate = u"""<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
+docTemplate = u"""<%(container)s class="%(className)s YAMLDoc" id="%(headerId)s" markdown="1">
 
 %(headerLevel)s %(headerText)s
 
@@ -33,7 +35,7 @@ docTemplate = u"""<span class="%(className)s YAMLDoc" id="%(headerId)s" markdown
 %(sections)s
 %(misc)s
 
-</span>
+</%(container)s>
 """
 
 class BaseDoc(object):
@@ -47,7 +49,8 @@ class BaseDoc(object):
 
 	undefined = u'No description specified.'
 
-	def __init__(self, obj, enc=u'utf-8', namePrefix=u'', level=1):
+	def __init__(self, obj, enc=u'utf-8', namePrefix=u'', level=1,
+		customName=None, container=u'span', onlyContents=False, exclude=[]):
 
 		"""
 		desc:
@@ -68,12 +71,34 @@ class BaseDoc(object):
 				desc:	Describes the header level to be used, so that you can
 						generate formatted documentation.
 				type:	int
+			customName:
+				desc:	A custom name for the object.
+				type:	[str, unicode, None]
+			container:
+				desc:	The HTML container type that wraps the documentation.
+						Should be 'div' or 'span'.
+				type:	[str, unicode]
+			onlyContents:
+				desc:	Indicates whether the full documentation should be
+						generated (False), or only documentation for the child
+						objects (True). This can be useful for documenting the
+						function in a module, without providing any
+						documentation on the module itself.
+				type:	bool
+			exclude:
+				desc:	A list of child objects to exclude. Only applicable to
+						objects that have children, such as classes and modules.
+				type:	list
 		"""
 
 		self.obj = obj
 		self.enc = enc
 		self.level = level
 		self.namePrefix = namePrefix
+		self.container = container
+		self.exclude = exclude
+		self.onlyContents = onlyContents
+		self.customName = customName
 
 	def __str__(self):
 
@@ -86,7 +111,10 @@ class BaseDoc(object):
 			type:	str
 		"""
 
-		return unicode(self).encode(self.enc)
+		u = self.__unicode__()
+		if py3:
+			return u
+		return safe_encode(u, self.enc)
 
 	def __unicode__(self):
 
@@ -104,15 +132,28 @@ class BaseDoc(object):
 		_dict = self._dict()
 		if not _dict[u'visible']:
 			return u''
-		md = docTemplate % {
-			u'className' 		: self.__class__.__name__,
-			u'headerLevel'		: u'#' * self.level,
-			u'headerText'		: self.header(_dict),
-			u'headerId'			: self._id(),
-			u'desc'				: _dict[u'desc'],
-			u'sections'			: self.sections(_dict),
-			u'misc'				: self.misc(_dict),
-			}
+		if self.onlyContents:
+			md = docTemplate % {
+				u'className' 		: u'',
+				u'headerLevel'		: u'',
+				u'headerText'		: u'',
+				u'headerId'			: u'',
+				u'desc'				: u'',
+				u'sections'			: self.sections(_dict),
+				u'misc'				: self.misc(_dict),
+				u'container'		: self.container,
+				}
+		else:
+			md = docTemplate % {
+				u'className' 		: self.__class__.__name__,
+				u'headerLevel'		: u'#' * self.level,
+				u'headerText'		: self.header(_dict),
+				u'headerId'			: self._id(),
+				u'desc'				: _dict[u'desc'],
+				u'sections'			: self.sections(_dict),
+				u'misc'				: self.misc(_dict),
+				u'container'		: self.container,
+				}
 		# Add header links, so that you can link to the object's documentation
 		# in the documentation of other objects.
 		l = self.name().split(u'.')
@@ -139,6 +180,8 @@ class BaseDoc(object):
 			type:	unicode
 		"""
 
+		if self.customName is not None:
+			return self.customName
 		return self.obj.__name__.decode(self.enc).replace(u'__', u'\_\_')
 
 	def _dict(self):
@@ -153,42 +196,34 @@ class BaseDoc(object):
 		"""
 
 		docStr = inspect.getdoc(self.obj)
-		if isinstance(docStr, types.NoneType):
-			_dict = {
-				u'desc':	self.undefined,
-				u'visible':	False
-				}
-		elif isinstance(docStr, str):
-			docStr = docStr.decode(self.enc)
+		if docStr is None:
+			_dict = OrderedDict( [(u'visible', False)] )
+		elif isinstance(docStr, basestring):
+			docStr = safe_decode(docStr, self.enc)
 			# If the docstring contains a YAML block between '---' then we
 			# use only this bit.
 			for r in re.finditer(u'^---(.*?)^---', docStr, re.M|re.S):
 				docStr = r.groups()[0]
 				break
 			try:
-				_dict = yaml.load(docStr)
-				if isinstance(_dict, str):
-					_dict = _dict.decode(self.enc)
-				if isinstance(_dict, unicode):
-					_dict = {
-						u'desc':	_dict,
-						u'visible':	False
-						}
-				if _dict == None:
-					_dict = {
-						u'visible':	False
-						}
+				_dict = orderedLoad(docStr)
+				if isinstance(_dict, basestring):
+					_dict = OrderedDict([
+						(u'desc', 		safe_decode(_dict, self.enc)),
+						(u'visible',	False)
+						])
+				elif _dict is None:
+					_dict = OrderedDict( [(u'visible', False)] )
 			except:
 				# If the docstring appears to be YAML formatted, but
 				# nevertheless fails to parse, we raise an exception to inform
 				# the user of the problem.
 				if docStr.strip().startswith(u'desc:'):
-					print docStr
 					yaml.load(docStr) # Will raise Exception
-				_dict = {
-					u'desc':	docStr,
-					u'visible':	False
-					}
+				_dict = OrderedDict([
+					(u'desc', 		docStr),
+					(u'visible',	False)
+					])
 		if u'desc' not in _dict:
 			_dict[u'desc'] = self.undefined
 		if u'visible' not in _dict:
