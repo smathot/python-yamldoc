@@ -22,6 +22,7 @@ from yamldoc.py3compat import *
 import re
 import types
 import inspect
+import yaml
 from yamldoc._yaml import orderedLoad
 from yamldoc._exceptions import YAMLDocError
 from collections import OrderedDict
@@ -50,7 +51,8 @@ class BaseDoc(object):
 	undefined = u'No description specified.'
 
 	def __init__(self, obj, enc=u'utf-8', namePrefix=u'', level=1,
-		customName=None, container=u'span', onlyContents=False, exclude=[]):
+		customName=None, container=u'span', onlyContents=False, exclude=[],
+		customDescriptor=None):
 
 		"""
 		desc:
@@ -89,6 +91,9 @@ class BaseDoc(object):
 				desc:	A list of child objects to exclude. Only applicable to
 						objects that have children, such as classes and modules.
 				type:	list
+			customDescriptor:
+				desc:	A custom descriptor instead of things like 'class'.
+				type:	[NoneType, str, unicode]
 		"""
 
 		self.obj = obj
@@ -99,6 +104,7 @@ class BaseDoc(object):
 		self.exclude = exclude
 		self.onlyContents = onlyContents
 		self.customName = customName
+		self.customDescriptor = customDescriptor
 
 	def __str__(self):
 
@@ -157,14 +163,14 @@ class BaseDoc(object):
 		# Add header links, so that you can link to the object's documentation
 		# in the documentation of other objects.
 		l = self.name().split(u'.')
+		print(l)
 		md += u'\n\n'
 		while len(l) > 0:
-			md += u'[%s]: #%s\n' % (u'.'.join(l), self._id())
+			# md += u'[%s]: #%s\n\n' % (u'.'.join(l), self._id())
 			l = l[1:]
 		md += u'\n'
-		# Strip all triple newlines
-		while u'\n\n\n' in md:
-			md = md.replace(u'\n\n\n', u'\n\n')
+		while u'\n'*3 in md:
+			md = md.replace(u'\n'*3, u'\n'*2)
 		return md
 
 	def _name(self):

@@ -34,7 +34,8 @@ class ClassDoc(BaseDoc):
 
 	def header(self, _dict):
 
-		return u'class __%s__' % self.name()
+		return u'%s __%s__' % (u'class' if self.customDescriptor is None \
+			else self.customDescriptor, self.name())
 
 	def misc(self, _dict):
 
